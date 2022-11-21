@@ -7,4 +7,5 @@ public interface IDescript {
 
     Response inputDescript(String userID, String descriptions);
 
+    Response getAllDescript(String userID, String titleID);
 }

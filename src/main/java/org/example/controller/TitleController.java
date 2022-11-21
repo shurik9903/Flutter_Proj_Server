@@ -4,24 +4,25 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.example.model.description.IDescript;
+import org.example.model.title.ITitle;
 import org.example.model.token.ITokenKey;
 import org.example.model.token.ITokenValidator;
 import org.example.model.token.TokenKey;
 import org.example.model.token.TokenValidator;
 
-@Path("/descript")
-public class DescriptionController {
+@Path("/title")
+public class TitleController {
 
     @Inject
-    private IDescript descript;
+    private ITitle title;
 
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response doPost(String descriptions,  @HeaderParam("Token") String UserToken, @HeaderParam("UserID") String UserID) {
+    public Response doPost(String titleData, @HeaderParam("Token") String UserToken, @HeaderParam("UserID") String UserID) {
         try {
 
-            System.out.println("desc: " + descriptions + "\n" +
+            System.out.println("title: " + titleData + "\n" +
                     "token: " + UserToken + "\n" +
                     "id: " + UserID + "\n");
 
@@ -33,16 +34,15 @@ public class DescriptionController {
                 return Response.status(Response.Status.FORBIDDEN).entity("|Error: " + e.getMessage()).build();
             }
 
-            return descript.inputDescript(UserID, descriptions);
+            return title.inputTitle(UserID, titleData);
         }catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Error: " + e.getMessage()).build();
         }
     }
 
-
     @GET
     @Produces("application/json")
-    public Response doGet(@HeaderParam("Token") String UserToken, @HeaderParam("UserID") String UserID, @HeaderParam("TitleID") String TitleID) {
+    public Response doGet(@HeaderParam("Token") String UserToken, @HeaderParam("UserID") String UserID, @HeaderParam("TitleName") String TitleName) {
         try {
 
             try {
@@ -53,7 +53,7 @@ public class DescriptionController {
                 return Response.status(Response.Status.FORBIDDEN).entity("|Error: " + e.getMessage()).build();
             }
 
-            return descript.getAllDescript(UserID, TitleID);
+            return title.getTitle(UserID, TitleName);
         }catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Error: " + e.getMessage()).build();
         }

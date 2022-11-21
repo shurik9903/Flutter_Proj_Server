@@ -14,6 +14,8 @@ import org.example.data.mdata.DDescription;
 import org.example.data.mdata.DTitle;
 import org.example.data.mdata.DLogin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -125,15 +127,16 @@ public class DataBaseWork implements IDataBaseWork {
     }
 
     @Override
-    public String add_title(String userID, String title, StringBuilder Msg) {
+    public DTitle add_title(String userID, String title) {
         EntityManager entityManager = null;
-
+        DTitle dTitle;
         try {
             try {
                 entityManager = EMF.createEntityManager();
             } catch (Exception e) {
-                Msg.append("Error while Entity Manager initializing");
-                return null;
+                dTitle = new DTitle();
+                dTitle.setMsg("Error while Entity Manager initializing");
+                return dTitle;
             }
 
             Transaction.begin();
@@ -141,16 +144,17 @@ public class DataBaseWork implements IDataBaseWork {
 
             Query query;
             ETitle eTitle;
+
             query = entityManager.createNativeQuery("Select * from user_title where title = ? and userid = ?", ETitle.class);
             query.setParameter(1, title)
                     .setParameter(2, userID);
 
             if (query.getResultList().size() != 0) {
                 eTitle = (ETitle) query.getSingleResult();
-
+                dTitle = new DTitle(eTitle);
                 Transaction.commit();
                 entityManager.close();
-                return eTitle.getTitle_ID().toString();
+                return dTitle;
             }
 
             query = entityManager.createNativeQuery("Insert into user_title (title, userid) values (?,?)");
@@ -158,47 +162,122 @@ public class DataBaseWork implements IDataBaseWork {
                     .setParameter(2, userID)
                     .executeUpdate();
 
-            eTitle = (ETitle) query.getSingleResult();
+
+
+            query = entityManager.createNativeQuery("Select * from user_title where title = ? and userid = ?", ETitle.class);
+            query.setParameter(1, title)
+                    .setParameter(2, userID);
+
+            if (query.getResultList().size() != 0) {
+                eTitle = (ETitle) query.getSingleResult();
+                dTitle = new DTitle(eTitle);
+                Transaction.commit();
+                entityManager.close();
+                return dTitle;
+            }
+
+            dTitle = new DTitle();
+            dTitle.setMsg("Not data");
 
             Transaction.commit();
             entityManager.close();
 
-            return eTitle.getTitle_ID().toString();
+            return dTitle;
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
             entityManager.close();
-            Msg.append("Failed to connect to server: " + e.getMessage());
-            return null;
+            dTitle = new DTitle();
+            dTitle.setMsg("Failed to connect to server: " + e.getMessage());
+            return dTitle;
         }
     }
 
     @Override
-    public String add_description(String UserID, DDescription description, StringBuilder Msg, String titleID) {
+    public DTitle get_title(String userID, String titleName) {
         EntityManager entityManager = null;
+        DTitle dTitle;
         try {
             try {
                 entityManager = EMF.createEntityManager();
             } catch (Exception e) {
-                Msg.append("Error while Entity Manager initializing");
-                return null;
+                dTitle = new DTitle();
+                dTitle.setMsg("Error while Entity Manager initializing");
+                return dTitle;
             }
 
             Transaction.begin();
             entityManager.joinTransaction();
 
+            Query query;
+            ETitle eTitle;
+
+            query = entityManager.createNativeQuery("Select * from user_title where title = ? and userid = ?", ETitle.class);
+            query.setParameter(1, titleName)
+                    .setParameter(2, userID);
+
+            if (query.getResultList().size() != 0) {
+                eTitle = (ETitle) query.getSingleResult();
+                dTitle = new DTitle(eTitle);
+                Transaction.commit();
+                entityManager.close();
+                return dTitle;
+            }
+
+            Transaction.commit();
+            entityManager.close();
+            dTitle = new DTitle();
+            dTitle.setMsg("Not find title");
+            return dTitle;
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            entityManager.close();
+            dTitle = new DTitle();
+            dTitle.setMsg("Failed to connect to server: " + e.getMessage());
+            return dTitle;
+        }
+    }
+
+    @Override
+    public DDescription add_description(String UserID, DDescription description, String titleID) {
+        EntityManager entityManager = null;
+        DDescription dDesc;
+        try {
+            try {
+                entityManager = EMF.createEntityManager();
+            } catch (Exception e) {
+                dDesc = new DDescription();
+                dDesc.setMsg("Error while Entity Manager initializing");
+                return dDesc;
+            }
+            System.out.println("Testing test");
+
+            Transaction.begin();
+
+            System.out.println("Testing test2");
+            entityManager.joinTransaction();
+
+            System.out.println("Testing test3");
+
 
             Query query;
+
+            System.out.println("Testing test6");
 
             query = entityManager.createNativeQuery("Select * from description where name = ? and userid = ? and titleid = ?", EDescription.class);
             query.setParameter(1, description.getName())
                     .setParameter(2, UserID)
                     .setParameter(3, titleID);
 
+            System.out.println("Testing test4");
+
             if (query.getResultList().size() != 0) {
                 EDescription eDescription = (EDescription) query.getSingleResult();
 
-                query = entityManager.createNativeQuery("Update description set name = ?, othername = ?, images = ?, text = ?, color = ?  where id = ?");
+                System.out.println("Testing test5");
+
+                query = entityManager.createNativeQuery("Update description set name = ?, othername = ?, images = ?, text = ?, color = ? where id = ?");
                 query.setParameter(1,  description.getName())
                         .setParameter(2, description.getOtherName())
                         .setParameter(3, description.getImages())
@@ -207,9 +286,12 @@ public class DataBaseWork implements IDataBaseWork {
                         .setParameter(6, eDescription.getDesc_ID())
                         .executeUpdate();
 
+                dDesc = new DDescription(eDescription);
+
                 Transaction.commit();
                 entityManager.close();
-                return null;
+
+                return dDesc;
             }
 
             query = entityManager.createNativeQuery("Insert into description (name, othername, images, text, color, userid, titleid) values (?,?,?,?,?,?,?)");
@@ -222,18 +304,83 @@ public class DataBaseWork implements IDataBaseWork {
                     .setParameter(7, titleID)
                     .executeUpdate();
 
+
+
+
+            query = entityManager.createNativeQuery("Select * from description where name = ? and userid = ? and titleid = ?", EDescription.class);
+            query.setParameter(1, description.getName())
+                    .setParameter(2, UserID)
+                    .setParameter(3, titleID);
+
+            if (query.getResultList().size() != 0) {
+
+                EDescription eDescription = (EDescription) query.getSingleResult();
+                dDesc = new DDescription(eDescription);
+
+                Transaction.commit();
+                entityManager.close();
+
+                return dDesc;
+            }
+
+            dDesc = new DDescription();
+            dDesc.setMsg("Not Data");
+
             Transaction.commit();
             entityManager.close();
 
-            return null;
+            return dDesc;
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
             entityManager.close();
-            Msg.append("Failed to connect to server: " + e.getMessage());
+            dDesc = new DDescription();
+            dDesc.setMsg("Failed to connect to server: " + e.getMessage());
+            return dDesc;
+        }
+    }
+
+    @Override
+    public ArrayList<DDescription> get_description(String UserID, String TitleID, StringBuilder msg) {
+        EntityManager entityManager = null;
+
+        try {
+            try {
+                entityManager = EMF.createEntityManager();
+            } catch (Exception e) {
+                msg.append("Error while Entity Manager initializing");
+                return null;
+            }
+
+            Transaction.begin();
+            entityManager.joinTransaction();
+
+
+            Query query;
+
+            query = entityManager.createNativeQuery("Select * from description where userid = ? and titleid = ?", EDescription.class);
+            query.setParameter(1, UserID)
+                    .setParameter(2, TitleID);
+
+            List<EDescription> eDescriptions = query.getResultList();
+            ArrayList<DDescription> dDescriptions = new ArrayList<>();
+
+            for (EDescription eDesc: eDescriptions)
+                dDescriptions.add(new DDescription(eDesc));
+
+            Transaction.commit();
+            entityManager.close();
+
+            return dDescriptions;
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            entityManager.close();
+            msg.append("Failed to connect to server: ").append(e.getMessage());
             return null;
         }
     }
+
 
     @Override
     public boolean ping(){

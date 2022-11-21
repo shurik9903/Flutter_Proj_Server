@@ -3,8 +3,10 @@ D:\Java project\library\src\main\java\org\example\controller\DescriptionControll
 D:\Java project\library\src\main\java\org\example\data\mdata\DLogin.java
 D:\Java project\library\src\main\java\org\example\controller\RegistrationController.java
 D:\Java project\library\src\main\java\org\example\model\registration\Registration.java
+D:\Java project\library\src\main\java\org\example\model\title\Title.java
 D:\Java project\library\src\main\java\org\example\model\description\Descript.java
 D:\Java project\library\src\main\java\org\example\model\login\ILogin.java
+D:\Java project\library\src\main\java\org\example\controller\TitleController.java
 D:\Java project\library\src\main\java\org\example\model\database\IDataBaseWork.java
 D:\Java project\library\src\main\java\org\example\model\token\ITokenKey.java
 D:\Java project\library\src\main\java\org\example\model\token\TokenKey.java
@@ -13,6 +15,7 @@ D:\Java project\library\src\main\java\org\example\model\registration\IRegistrati
 D:\Java project\library\src\main\java\org\example\controller\API.java
 D:\Java project\library\src\main\java\org\example\data\mdata\DDescription.java
 D:\Java project\library\src\main\java\org\example\data\entity\ETitle.java
+D:\Java project\library\src\main\java\org\example\model\title\ITitle.java
 D:\Java project\library\src\main\java\org\example\model\token\ITokenValidator.java
 D:\Java project\library\src\main\java\org\example\model\description\IDescript.java
 D:\Java project\library\src\main\java\org\example\controller\LoginController.java

@@ -1,7 +1,6 @@
-package org.example.model.description;
+package org.example.model.title;
 
 import jakarta.inject.Inject;
-
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.ws.rs.core.Response;
@@ -13,31 +12,47 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Descript implements IDescript {
+public class Title implements ITitle {
 
     @Inject
     private IDataBaseWork DataBaseWork;
 
     @Override
-    public Response inputDescript(String userID, String descriptions) {
+    public Response inputTitle(String userID, String title) {
+
         Jsonb jsonb = JsonbBuilder.create();
 
         Map<String, String> Result = new HashMap<>();
         Map<String, String> Data = new HashMap<>();
-        Data = (Map<String, String>) jsonb.fromJson(descriptions, Data.getClass());
+        Data = (Map<String, String>) jsonb.fromJson(title, Data.getClass());
 
         String name = Data.getOrDefault("name", "");
-        String text = Data.getOrDefault("text", "");
-        String color = Data.getOrDefault("color", "");
-        String title = Data.getOrDefault("title", "");
 
-        ArrayList<String> otherName = new ArrayList<>();
-        otherName = jsonb.fromJson(Data.getOrDefault("otherName", ""), otherName.getClass());
+        try {
+            if (!DataBaseWork.ping()) {
+                Result.put("Msg", "Not connection to server.");
+                return Response.ok(jsonb.toJson(Result)).build();
+            }
 
-        ArrayList<String> images = new ArrayList<>();
-        images = jsonb.fromJson(Data.getOrDefault("images", ""), images.getClass());
+            DTitle dTitle = DataBaseWork.add_title(userID, title);
 
-        DDescription description = new DDescription(name, String.join(",", otherName), String.join(",", images), text, color);
+            Result.put("Msg", dTitle.getMsg());
+            Result.put("Title", dTitle.getTitle_name());
+            Result.put("TitleID", dTitle.getTitle_ID().toString());
+            return Response.ok(jsonb.toJson(Result)).build();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity("|Error: " + e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Response getTitle(String userID, String title) {
+
+        Jsonb jsonb = JsonbBuilder.create();
+
+        Map<String, String> Result = new HashMap<>();
 
         try {
             if (!DataBaseWork.ping()) {
@@ -48,12 +63,10 @@ public class Descript implements IDescript {
 
             DTitle dTitle = DataBaseWork.add_title(userID, title);
 
-            DDescription dDesc = new DDescription();
-            if (dTitle.getMsg() == null)
-                dDesc = DataBaseWork.add_description(userID, description, dTitle.getTitle_ID().toString());
+            Result.put("Msg", dTitle.getMsg());
+            Result.put("Title", dTitle.getTitle_name());
+            Result.put("TitleID", dTitle.getTitle_ID().toString());
 
-            Result.put("Title msg", dTitle.getMsg());
-            Result.put("description msg", dDesc.getMsg());
             return Response.ok(jsonb.toJson(Result)).build();
 
         } catch (Exception e) {
@@ -61,34 +74,4 @@ public class Descript implements IDescript {
             return Response.status(Response.Status.BAD_REQUEST).entity("|Error: " + e.getMessage()).build();
         }
     }
-
-
-    @Override
-    public Response getAllDescript(String userID, String titleID) {
-
-        Jsonb jsonb = JsonbBuilder.create();
-
-        Map<String, String> Result = new HashMap<>();
-        try {
-            if (!DataBaseWork.ping()) {
-                Result.put("Msg", "Not connection to server.");
-                return Response.ok(jsonb.toJson(Result)).build();
-            }
-
-
-            StringBuilder msg = new StringBuilder();
-
-            ArrayList<DDescription> dDesc = DataBaseWork.get_description(userID,titleID,msg);
-
-
-            Result.put("msg", msg.toString());
-            Result.put("Description", dDesc.toString());
-            return Response.ok(jsonb.toJson(Result)).build();
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST).entity("|Error: " + e.getMessage()).build();
-        }
-    }
-
 }

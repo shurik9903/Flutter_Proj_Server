@@ -11,10 +11,10 @@ public class DTitle {
 
     public DTitle(){}
 
-    public DTitle(ETitle descript){
-        this.user_ID = descript.getTitle_ID();
-        this.title_name = descript.getTitle_name();
-        this.user_ID = descript.getUser_ID();
+    public DTitle(ETitle title){
+        this.title_ID = title.getTitle_ID();
+        this.title_name = title.getTitle_name();
+        this.user_ID = title.getUser_ID();
     }
 
 

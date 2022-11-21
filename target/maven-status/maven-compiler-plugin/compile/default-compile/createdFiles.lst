@@ -15,11 +15,14 @@ org\example\data\entity\EDescription.class
 org\example\controller\DescriptionController.class
 org\example\data\entity\ETitle.class
 org\example\data\entity\ELogin.class
+org\example\model\title\Title.class
 org\example\model\registration\Registration.class
 org\example\model\token\ITokenValidator.class
 org\example\data\mdata\DTitle.class
 org\example\model\token\TokenValidator.class
+org\example\controller\TitleController.class
 org\example\data\mdata\DDescription.class
+org\example\model\title\ITitle.class
 org\example\model\token\TokenIssuer.class
 org\example\model\token\ITokenKey.class
 org\example\model\description\IDescript.class

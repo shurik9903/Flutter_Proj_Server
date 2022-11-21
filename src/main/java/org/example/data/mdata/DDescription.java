@@ -2,6 +2,8 @@ package org.example.data.mdata;
 
 import org.example.data.entity.EDescription;
 
+import java.util.Arrays;
+
 public class DDescription {
     private Integer desc_ID;
     private String name;
@@ -11,6 +13,7 @@ public class DDescription {
     private String color;
     private Integer user_ID;
     private Integer title_ID;
+    private String Msg;
 
     public DDescription(){};
 
@@ -31,9 +34,11 @@ public class DDescription {
         this.color = color;
         this.user_ID = user_ID;
         this.title_ID = title_ID;
+        System.out.println("test" + otherName);
+        System.out.println("test" + images);
     }
 
-    DDescription(EDescription desc){
+    public DDescription(EDescription desc){
         this.desc_ID = desc.getDesc_ID();
         this.name = desc.getName();
         this.otherName = desc.getOtherName();
@@ -106,5 +111,27 @@ public class DDescription {
 
     public void setTitle_ID(Integer title_ID) {
         this.title_ID = title_ID;
+    }
+
+    public String getMsg() {
+        return Msg;
+    }
+
+    public void setMsg(String msg) {
+        Msg = msg;
+    }
+
+    @Override
+    public String toString(){
+        return "{" +
+                " \"id\":" + "\"" + desc_ID + "\"" +
+                ", \"name\":" + "\"" + name + "\"" +
+                ", \"otherName\":" + Arrays.toString(Arrays.stream(otherName.split(",")).map(s -> ("\"" + s + "\"")).toArray()) +
+                ", \"images\":" + Arrays.toString(Arrays.stream(images.split(",")).map(s -> ("\"" + s + "\"")).toArray()) +
+                ", \"text\":" + "\"" + text + "\"" +
+                ", \"color\":" + "\"" + color + "\"" +
+                ", \"titleID\":" + "\"" + title_ID + "\"" +
+                ", \"msg\":" +  Msg +
+                "}";
     }
 }

@@ -7,7 +7,6 @@ public class TokenValidator implements ITokenValidator{
 
     private String key;
 
-
     public TokenValidator(String lKey) {
         key = lKey;
     }
