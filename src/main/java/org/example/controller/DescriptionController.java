@@ -18,12 +18,9 @@ public class DescriptionController {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response doPost(String descriptions,  @HeaderParam("Token") String UserToken, @HeaderParam("UserID") String UserID) {
+    public Response doPost(String descriptions,  @HeaderParam("Token") String UserToken) {
         try {
 
-            System.out.println("desc: " + descriptions + "\n" +
-                    "token: " + UserToken + "\n" +
-                    "id: " + UserID + "\n");
 
             try {
                 ITokenKey tokenKey = new TokenKey();
@@ -33,7 +30,27 @@ public class DescriptionController {
                 return Response.status(Response.Status.FORBIDDEN).entity("|Error: " + e.getMessage()).build();
             }
 
-            return descript.inputDescript(UserID, descriptions);
+            return descript.addDescript(descriptions);
+        }catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Error: " + e.getMessage()).build();
+        }
+    }
+
+
+    @PUT
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response doPut(String descriptions,  @HeaderParam("Token") String UserToken){
+        try {
+            try {
+                ITokenKey tokenKey = new TokenKey();
+                ITokenValidator tokenValidator = new TokenValidator(tokenKey.getKey());
+                tokenValidator.validate(UserToken);
+            } catch (Exception e) {
+                return Response.status(Response.Status.FORBIDDEN).entity("|Error: " + e.getMessage()).build();
+            }
+
+            return descript.putDescript(descriptions);
         }catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Error: " + e.getMessage()).build();
         }

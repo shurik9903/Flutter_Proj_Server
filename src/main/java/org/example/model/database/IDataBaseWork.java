@@ -12,7 +12,9 @@ public interface IDataBaseWork {
 
     DTitle get_title(String userID, String titleName);
 
-    DDescription add_description(String UserID, DDescription description, String titleID);
+    DDescription put_description(DDescription description);
+
+    DDescription add_description( DDescription description);
 
     ArrayList<DDescription> get_description(String UserID, String TitleID, StringBuilder msg);
 

@@ -5,7 +5,11 @@ import jakarta.ws.rs.core.Response;
 
 public interface IDescript {
 
-    Response inputDescript(String userID, String descriptions);
+//    Response updateDescript(String descriptions);
+
+    Response putDescript(String descriptions);
+
+    Response addDescript(String descriptions);
 
     Response getAllDescript(String userID, String titleID);
 }

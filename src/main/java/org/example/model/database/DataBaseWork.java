@@ -240,7 +240,7 @@ public class DataBaseWork implements IDataBaseWork {
     }
 
     @Override
-    public DDescription add_description(String UserID, DDescription description, String titleID) {
+    public DDescription put_description(DDescription description) {
         EntityManager entityManager = null;
         DDescription dDesc;
         try {
@@ -251,42 +251,90 @@ public class DataBaseWork implements IDataBaseWork {
                 dDesc.setMsg("Error while Entity Manager initializing");
                 return dDesc;
             }
-            System.out.println("Testing test");
 
             Transaction.begin();
-
-            System.out.println("Testing test2");
             entityManager.joinTransaction();
-
-            System.out.println("Testing test3");
-
 
             Query query;
 
-            System.out.println("Testing test6");
+            query = entityManager.createNativeQuery("Select * from description where id = ? and userid = ?", EDescription.class);
+            query.setParameter(1, description.getDesc_ID())
+                    .setParameter(2, description.getUser_ID());
+
+            if (query.getResultList().size() == 0) {
+                dDesc = new DDescription();
+                dDesc.setMsg("Description don't find");
+
+                Transaction.commit();
+                entityManager.close();
+
+                return dDesc;
+            }
+
+            EDescription eDescription = (EDescription) query.getSingleResult();
+
+            query = entityManager.createNativeQuery("Update description set name = ?, othername = ?, images = ?, text = ?, color = ? where id = ?");
+            query.setParameter(1,  description.getName())
+                    .setParameter(2, description.getOtherName())
+                    .setParameter(3, description.getImages())
+                    .setParameter(4, description.getText())
+                    .setParameter(5, description.getColor())
+                    .setParameter(6, eDescription.getDesc_ID())
+                    .executeUpdate();
+
+            dDesc = new DDescription(eDescription);
+
+            Transaction.commit();
+            entityManager.close();
+
+            return dDesc;
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            entityManager.close();
+            dDesc = new DDescription();
+            dDesc.setMsg("Failed to connect to server: " + e.getMessage());
+            return dDesc;
+        }
+    }
+
+    @Override
+    public DDescription add_description(DDescription description) {
+        EntityManager entityManager = null;
+        DDescription dDesc;
+        try {
+            try {
+                entityManager = EMF.createEntityManager();
+            } catch (Exception e) {
+                dDesc = new DDescription();
+                dDesc.setMsg("Error while Entity Manager initializing");
+                return dDesc;
+            }
+
+            Transaction.begin();
+            entityManager.joinTransaction();
+
+            Query query;
 
             query = entityManager.createNativeQuery("Select * from description where name = ? and userid = ? and titleid = ?", EDescription.class);
             query.setParameter(1, description.getName())
-                    .setParameter(2, UserID)
-                    .setParameter(3, titleID);
-
-            System.out.println("Testing test4");
+                    .setParameter(2, description.getUser_ID())
+                    .setParameter(3, description.getTitle_ID());
 
             if (query.getResultList().size() != 0) {
-                EDescription eDescription = (EDescription) query.getSingleResult();
+//                EDescription eDescription = (EDescription) query.getSingleResult();
+//
+//                query = entityManager.createNativeQuery("Update description set name = ?, othername = ?, images = ?, text = ?, color = ? where id = ?");
+//                query.setParameter(1,  description.getName())
+//                        .setParameter(2, description.getOtherName())
+//                        .setParameter(3, description.getImages())
+//                        .setParameter(4, description.getText())
+//                        .setParameter(5, description.getColor())
+//                        .setParameter(6, eDescription.getDesc_ID())
+//                        .executeUpdate();
 
-                System.out.println("Testing test5");
-
-                query = entityManager.createNativeQuery("Update description set name = ?, othername = ?, images = ?, text = ?, color = ? where id = ?");
-                query.setParameter(1,  description.getName())
-                        .setParameter(2, description.getOtherName())
-                        .setParameter(3, description.getImages())
-                        .setParameter(4, description.getText())
-                        .setParameter(5, description.getColor())
-                        .setParameter(6, eDescription.getDesc_ID())
-                        .executeUpdate();
-
-                dDesc = new DDescription(eDescription);
+                dDesc = new DDescription();
+                dDesc.setMsg("This name is already in use");
 
                 Transaction.commit();
                 entityManager.close();
@@ -300,17 +348,15 @@ public class DataBaseWork implements IDataBaseWork {
                     .setParameter(3, description.getImages())
                     .setParameter(4, description.getText())
                     .setParameter(5, description.getColor())
-                    .setParameter(6, UserID)
-                    .setParameter(7, titleID)
+                    .setParameter(6, description.getUser_ID())
+                    .setParameter(7, description.getTitle_ID())
                     .executeUpdate();
-
-
 
 
             query = entityManager.createNativeQuery("Select * from description where name = ? and userid = ? and titleid = ?", EDescription.class);
             query.setParameter(1, description.getName())
-                    .setParameter(2, UserID)
-                    .setParameter(3, titleID);
+                    .setParameter(2, description.getUser_ID())
+                    .setParameter(3, description.getTitle_ID());
 
             if (query.getResultList().size() != 0) {
 

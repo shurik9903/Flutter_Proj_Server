@@ -19,13 +19,16 @@ public class Descript implements IDescript {
     private IDataBaseWork DataBaseWork;
 
     @Override
-    public Response inputDescript(String userID, String descriptions) {
+    public Response putDescript(String descriptions){
         Jsonb jsonb = JsonbBuilder.create();
 
         Map<String, String> Result = new HashMap<>();
         Map<String, String> Data = new HashMap<>();
         Data = (Map<String, String>) jsonb.fromJson(descriptions, Data.getClass());
 
+        String id = Data.getOrDefault("id", "");
+        String userid = Data.getOrDefault("userid", "");
+        String titleid = Data.getOrDefault("titleid", "");
         String name = Data.getOrDefault("name", "");
         String text = Data.getOrDefault("text", "");
         String color = Data.getOrDefault("color", "");
@@ -37,7 +40,7 @@ public class Descript implements IDescript {
         ArrayList<String> images = new ArrayList<>();
         images = jsonb.fromJson(Data.getOrDefault("images", ""), images.getClass());
 
-        DDescription description = new DDescription(name, String.join(",", otherName), String.join(",", images), text, color);
+        DDescription description = new DDescription(id, name, String.join(",", otherName), String.join(",", images), text, color, userid, titleid);
 
         try {
             if (!DataBaseWork.ping()) {
@@ -46,14 +49,57 @@ public class Descript implements IDescript {
             }
 
 
-            DTitle dTitle = DataBaseWork.add_title(userID, title);
+            DDescription dDesc = DataBaseWork.put_description(description);
+            Result.put("Msg", dDesc.getMsg());
+            return Response.ok(jsonb.toJson(Result)).build();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity("|Error: " + e.getMessage()).build();
+        }
+
+    };
+
+    @Override
+    public Response addDescript(String descriptions) {
+        Jsonb jsonb = JsonbBuilder.create();
+
+        Map<String, String> Result = new HashMap<>();
+        Map<String, String> Data = new HashMap<>();
+        Data = (Map<String, String>) jsonb.fromJson(descriptions, Data.getClass());
+
+        String id = Data.getOrDefault("id", "");
+        String userid = Data.getOrDefault("userid", "");
+        String titleid = Data.getOrDefault("titleid", "");
+        String name = Data.getOrDefault("name", "");
+        String text = Data.getOrDefault("text", "");
+        String color = Data.getOrDefault("color", "");
+        String title = Data.getOrDefault("title", "");
+
+        ArrayList<String> otherName = new ArrayList<>();
+        otherName = jsonb.fromJson(Data.getOrDefault("otherName", ""), otherName.getClass());
+
+        ArrayList<String> images = new ArrayList<>();
+        images = jsonb.fromJson(Data.getOrDefault("images", ""), images.getClass());
+
+        DDescription description = new DDescription(id, name, String.join(",", otherName), String.join(",", images), text, color, userid, titleid);
+
+        try {
+            if (!DataBaseWork.ping()) {
+                Result.put("Msg", "Not connection to server.");
+                return Response.ok(jsonb.toJson(Result)).build();
+            }
+
+
+            DTitle dTitle = DataBaseWork.add_title(description.getUser_ID(), title);
 
             DDescription dDesc = new DDescription();
             if (dTitle.getMsg() == null)
-                dDesc = DataBaseWork.add_description(userID, description, dTitle.getTitle_ID().toString());
+                dDesc = DataBaseWork.add_description(description);
+
 
             Result.put("Title msg", dTitle.getMsg());
-            Result.put("description msg", dDesc.getMsg());
+            Result.put("Description msg", dDesc.getMsg());
             return Response.ok(jsonb.toJson(Result)).build();
 
         } catch (Exception e) {

@@ -5,14 +5,14 @@ import org.example.data.entity.EDescription;
 import java.util.Arrays;
 
 public class DDescription {
-    private Integer desc_ID;
+    private String desc_ID;
     private String name;
     private String otherName;
     private String images;
     private String text;
     private String color;
-    private Integer user_ID;
-    private Integer title_ID;
+    private String user_ID;
+    private String title_ID;
     private String Msg;
 
     public DDescription(){};
@@ -25,7 +25,7 @@ public class DDescription {
         this.color = color;
     }
 
-    public DDescription(Integer desc_ID, String name, String otherName, String images, String text, String color, Integer user_ID, Integer title_ID) {
+    public DDescription(String desc_ID, String name, String otherName, String images, String text, String color, String user_ID, String title_ID) {
         this.desc_ID = desc_ID;
         this.name = name;
         this.otherName = otherName;
@@ -34,26 +34,24 @@ public class DDescription {
         this.color = color;
         this.user_ID = user_ID;
         this.title_ID = title_ID;
-        System.out.println("test" + otherName);
-        System.out.println("test" + images);
     }
 
     public DDescription(EDescription desc){
-        this.desc_ID = desc.getDesc_ID();
+        this.desc_ID = desc.getDesc_ID().toString();
         this.name = desc.getName();
         this.otherName = desc.getOtherName();
         this.images = desc.getImages();
         this.text = desc.getText();
         this.color = desc.getColor();
-        this.user_ID = desc.getUser_ID();
-        this.title_ID = desc.getTitle_ID();
+        this.user_ID = desc.getUser_ID().toString();
+        this.title_ID = desc.getTitle_ID().toString();
     }
 
-    public Integer getDesc_ID() {
+    public String getDesc_ID() {
         return desc_ID;
     }
 
-    public void setDesc_ID(Integer desc_ID) {
+    public void setDesc_ID(String desc_ID) {
         this.desc_ID = desc_ID;
     }
 
@@ -97,19 +95,19 @@ public class DDescription {
         this.color = color;
     }
 
-    public Integer getUser_ID() {
+    public String getUser_ID() {
         return user_ID;
     }
 
-    public void setUser_ID(Integer user_ID) {
+    public void setUser_ID(String user_ID) {
         this.user_ID = user_ID;
     }
 
-    public Integer getTitle_ID() {
+    public String getTitle_ID() {
         return title_ID;
     }
 
-    public void setTitle_ID(Integer title_ID) {
+    public void setTitle_ID(String title_ID) {
         this.title_ID = title_ID;
     }
 
@@ -130,7 +128,8 @@ public class DDescription {
                 ", \"images\":" + Arrays.toString(Arrays.stream(images.split(",")).map(s -> ("\"" + s + "\"")).toArray()) +
                 ", \"text\":" + "\"" + text + "\"" +
                 ", \"color\":" + "\"" + color + "\"" +
-                ", \"titleID\":" + "\"" + title_ID + "\"" +
+                ", \"titleid\":" + "\"" + title_ID + "\"" +
+                ", \"userid\":" + "\"" + title_ID + "\"" +
                 ", \"msg\":" +  Msg +
                 "}";
     }
